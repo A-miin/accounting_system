@@ -66,9 +66,55 @@ class Member(models.Model):
                                    blank=True,
                                    verbose_name=_('Өчүрүлгөн'))
 
+    def image_tag(self):
+        from django.utils.html import escape
+        return u'<img src="%s"/>' % escape(self.avatar.url)
+
+    image_tag.short_description = 'Image'
+    image_tag.allow_tags = True
+
     def __str__(self):
         return self.name
 
     class Meta:
         verbose_name = _('Мүчө')
         verbose_name_plural = _('Мүчөлөр')
+
+class TransferType(models.Model):
+    name = models.CharField(max_length=256,
+                            verbose_name=_('Аталышы'))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('Которуу түрү')
+        verbose_name_plural = _('Которуу түрлөрү')
+
+class MembershipFee(models.Model):
+    payer = models.ForeignKey('webapp.Member',
+                              on_delete=models.CASCADE,
+                              related_name='payments',
+                              verbose_name=_('Төлөөчү'))
+
+    amount = models.PositiveIntegerField(verbose_name=_('Төлөм суммасы'))
+    transfer_type = models.ForeignKey('webapp.TransferType',
+                                      on_delete=models.CASCADE,
+                                      related_name='membership_fee',
+                                      verbose_name=_('Которуу түрү'))
+
+    info = models.TextField(max_length=2048,
+                            verbose_name=_('Кошумча маалымат'))
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_payed = models.BooleanField(default=False,
+                                   verbose_name=_('Төлөндү белгиси'))
+
+    payed_at = models.DateTimeField(null=True,
+                                    blank=True,
+                                    verbose_name=_('Төлөнгөн тарыхы'))
+
+    def __str__(self):
+        return f'{self.payer}: {self.is_payed}'
+
+
