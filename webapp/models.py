@@ -97,7 +97,9 @@ class MembershipFee(models.Model):
                               related_name='payments',
                               verbose_name=_('Төлөөчү'))
 
-    amount = models.PositiveIntegerField(verbose_name=_('Төлөм суммасы'))
+    amount = models.PositiveIntegerField(default=200,
+                                         verbose_name=_('Төлөм суммасы'))
+
     transfer_type = models.ForeignKey('webapp.TransferType',
                                       on_delete=models.CASCADE,
                                       related_name='membership_fee',
@@ -117,4 +119,30 @@ class MembershipFee(models.Model):
     def __str__(self):
         return f'{self.payer}: {self.is_payed}'
 
+PAYMENT_CHOICES=[
+    ('income','Киреше'),
+    ('expense', 'Чыгаша')
+]
 
+class Payments(models.Model):
+    payer = models.CharField(max_length=128,
+                             verbose_name=_('Төлөөчү'))
+
+    amount = models.PositiveIntegerField(verbose_name=_('Төлөм суммасы'))
+
+    type = models.CharField(max_length=128,
+                            choices=PAYMENT_CHOICES,
+                            verbose_name=_('Төлөм түрү'))
+
+    info = models.TextField(max_length=2048,
+                            verbose_name=_('Кошумча маалымат'))
+
+    created_at = models.DateTimeField(auto_now_add=True,
+                                      verbose_name=_('Төлөм тарыхы'))
+
+    def __str__(self):
+        return f'{self.payer}:{self.amount} - {self.type}'
+
+    class Meta:
+        verbose_name = _('Төлөм')
+        verbose_name_plural = _('Төлөмдөр')
