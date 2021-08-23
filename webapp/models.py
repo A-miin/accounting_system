@@ -68,3 +68,7 @@ class Member(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = _('Мүчө')
+        verbose_name_plural = _('Мүчөлөр')
