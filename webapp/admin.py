@@ -1,25 +1,20 @@
-import datetime
-from django.db import models
 from django.contrib import admin
 from django.urls import reverse
-from django.utils import timezone
-from webapp.models import Member, Region, Village, MembershipFee, TransferType, Payments
+from webapp.models import Member, Region, Village, MembershipFee, Payments
 from django.utils.html import mark_safe, format_html
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Q
-
 
 
 # Register your models here.
 
 class IsPayed(admin.SimpleListFilter):
-    title = 'Мүчөлүк төлөмдөрдөн'
-    parameter_name = 'Мүчөлүк төлөмдөрдөн'
+    title = _('Мүчөлүк төлөмдөрдөн')
+    parameter_name = _('Мүчөлүк төлөмдөрдөн')
 
     def lookups(self, request, model_admin):
         return (
-            ('Yes', 'бошотулган'),
-            ('No', 'бошотулбаган'),
+            ('Yes', _('бошотулган')),
+            ('No', _('бошотулбаган')),
         )
 
     def queryset(self, request, queryset):
@@ -30,14 +25,15 @@ class IsPayed(admin.SimpleListFilter):
             return queryset.exclude(membership_fee=True)
         return queryset
 
+
 class Deleted(admin.SimpleListFilter):
-    title = 'Мүчөлөр'
-    parameter_name = 'Мүчөлөр'
+    title = _('Мүчөлөр')
+    parameter_name = _('Мүчөлөр')
 
     def lookups(self, request, model_admin):
         return (
-            ('Yes', 'Активдүү'),
-            ('No', 'Oчүрүлгөн'),
+            ('Yes', _('Активдүү')),
+            ('No', _('Oчүрүлгөн')),
         )
 
     def queryset(self, request, queryset):
@@ -48,16 +44,18 @@ class Deleted(admin.SimpleListFilter):
             return queryset.exclude(deleted=None)
         return queryset
 
+
 class MemberAdmin(admin.ModelAdmin):
     list_display = ['id', 'image_tag', 'name', 'phone_number1', 'region', 'village',
-                    'membership_payment','delete']
-    list_filter = ['region', 'village',Deleted, IsPayed]
+                    'membership_payment', 'delete']
+
+    list_filter = ['region', 'village', Deleted, IsPayed]
     search_fields = ['name', 'surname', 'phone_number1', 'phone_number2', 'whatsapp_number']
-    readonly_fields = ('id','image_tag')
+    readonly_fields = ('id', 'image_tag')
     ordering = ('deleted', '-created_at')
     list_display_links = ['name']
 
-    def delete(self,obj):
+    def delete(self, obj):
         return format_html(
             '''
             <a class="btn btn-success" href="{}">
@@ -84,23 +82,19 @@ class MemberAdmin(admin.ModelAdmin):
     delete.short_description = _("Башкаруу")
 
 
-    def image(self, obj):
-        img = obj.images.first()
-        if img and img.picture:
-            output = f' <a href="{img.picture.url}?w=80&h=50" target="_blank">' \
-                     f'<img src="{img.picture.url}?w=80&h=50" ' \
-                     f'height=50 width=80/></a>'
-        else:
-            output = ""
-        return mark_safe(output)
-
 class MembershipFeeAdmin(admin.ModelAdmin):
     list_display = ['id', 'full_name', 'amount', 'payed_at', 'transfer_type', 'is_payed']
-    list_filter = ['payer', 'payed_at','is_payed']
-    search_fields = ['payer', 'amount', 'payed_at','transfer_type']
+    list_filter = ['payer', 'payed_at', 'is_payed']
+    search_fields = ['payer', 'amount', 'payed_at', 'transfer_type']
     readonly_fields = ('id',)
     ordering = ('-created_at',)
     list_display_links = ['full_name']
+
+    def full_name(self, obj):
+        return f'{obj.payer.name} {obj.payer.surname}'
+
+    full_name.short_description = _("Мүчө")
+
 
 class PaymentsAdmin(admin.ModelAdmin):
     list_display = ['id', 'payer', 'info', 'amount', 'created_at', 'payments_type']
@@ -111,29 +105,31 @@ class PaymentsAdmin(admin.ModelAdmin):
     list_display_links = ['payer']
 
     def payments_type(self, obj):
-        if obj.type=='income':
-            output='<p style="color:green">'\
-                        '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">'\
-                          '<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>'\
-                          '<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>'\
-                        '</svg>'\
-                    '</p>'
-        elif obj.type=='expense':
-            output = '<p style="color:red">'\
-                        '<svg class="text-danger" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle" viewBox="0 0 16 16">'\
-                          '<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>'\
-                          '<path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>'\
-                        '</svg>'\
-                    '</p>'
+        if obj.type == 'income':
+            output = '<p style="color:green">' \
+                     '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">' \
+                     '<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>' \
+                     '<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>' \
+                     '</svg>' \
+                     '</p>'
+        elif obj.type == 'expense':
+            output = '<p style="color:red">' \
+                     '<svg class="text-danger" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle" viewBox="0 0 16 16">' \
+                     '<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>' \
+                     '<path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>' \
+                     '</svg>' \
+                     '</p>'
         return mark_safe(output)
 
+
 class RegionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name','delete']
-    list_filter = ['name',]
-    search_fields = ['id','name']
+    list_display = ['id', 'name', 'delete']
+    list_filter = ['name', ]
+    search_fields = ['id', 'name']
     readonly_fields = ('id',)
-    list_display_links = ['name',]
-    def delete(self,obj):
+    list_display_links = ['name', ]
+
+    def delete(self, obj):
         return format_html(
             '''
             <a class="btn btn-success" style="color:red" href="{}">
@@ -147,13 +143,15 @@ class RegionAdmin(admin.ModelAdmin):
 
     delete.short_description = _("Башкаруу")
 
+
 class VillageAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'region','delete']
+    list_display = ['id', 'name', 'region', 'delete']
     list_filter = ['region', ]
     search_fields = ['id', 'name']
     readonly_fields = ('id',)
     list_display_links = ['name', ]
-    def delete(self,obj):
+
+    def delete(self, obj):
         return format_html(
             '''
             <a class="btn btn-success" style="color:red" href="{}">
@@ -166,6 +164,7 @@ class VillageAdmin(admin.ModelAdmin):
         )
 
     delete.short_description = _("Башкаруу")
+
 
 admin.site.register(Member, MemberAdmin)
 admin.site.register(MembershipFee, MembershipFeeAdmin)

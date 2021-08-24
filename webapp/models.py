@@ -12,8 +12,8 @@ class Region(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = 'Аймак'
-        verbose_name_plural = 'Аймактар'
+        verbose_name = _('Аймак')
+        verbose_name_plural = _('Аймактар')
 
 
 class Village(models.Model):
@@ -24,6 +24,7 @@ class Village(models.Model):
                                on_delete=models.CASCADE,
                                related_name='villages',
                                verbose_name=_('Аймагы'))
+
     def __str__(self):
         return self.name
 
@@ -69,7 +70,7 @@ class Member(models.Model):
 
     def image_tag(self):
         from django.utils.html import mark_safe
-        return mark_safe(u'<img src="%s" width="150" height="150"/>' % (self.avatar.url))
+        return mark_safe(u'<img src="%s" width="150" height="150"/>' % self.avatar.url)
 
     image_tag.short_description = _('Сүрөт')
     image_tag.allow_tags = True
@@ -91,11 +92,10 @@ class Member(models.Model):
             return MembershipFee.objects.filter(payer=self).last().is_payed
         return False
 
-
-
     class Meta:
         verbose_name = _('Мүчө')
         verbose_name_plural = _('Мүчөлөр')
+
 
 class TransferType(models.Model):
     name = models.CharField(max_length=256,
@@ -107,6 +107,7 @@ class TransferType(models.Model):
     class Meta:
         verbose_name = _('Которуу түрү')
         verbose_name_plural = _('Которуу түрлөрү')
+
 
 class MembershipFee(models.Model):
     payer = models.ForeignKey('webapp.Member',
@@ -136,18 +137,16 @@ class MembershipFee(models.Model):
     def __str__(self):
         return f'{self.payer}: {self.is_payed}'
 
-    @property
-    def full_name(self):
-        return f'{self.payer.name} {self.payer.surname}'
-
     class Meta:
-        verbose_name=_('Мүчөлүк төлөм')
-        verbose_name_plural=_('Мүчөлүк төлөмдөр')
+        verbose_name = _('Мүчөлүк төлөм')
+        verbose_name_plural = _('Мүчөлүк төлөмдөр')
 
-PAYMENT_CHOICES=[
-    ('income','Киреше'),
-    ('expense', 'Чыгаша')
+
+PAYMENT_CHOICES = [
+    ('income', _('Киреше')),
+    ('expense', _('Чыгаша'))
 ]
+
 
 class Payments(models.Model):
     payer = models.CharField(max_length=128,

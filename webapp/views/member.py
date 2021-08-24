@@ -11,6 +11,7 @@ from django.utils.http import urlencode
 from webapp.models import Member
 from webapp.form import SearchForm
 
+
 class IndexView(ListView):
     template_name = 'index.html'
     model = Member
@@ -48,6 +49,7 @@ class IndexView(ListView):
             context['query'] = urlencode({'search_value': self.search_data})
 
         return context
+
 
 class MemberDeleteView(LoginRequiredMixin, DeleteView):
     """
