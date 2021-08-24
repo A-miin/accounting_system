@@ -45,6 +45,8 @@ INSTALLED_APPS = [
 
     #     lib apps
     'phonenumber_field',
+    'django_celery_beat',
+
 
 ]
 
@@ -138,3 +140,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 MEDIA_URL = 'uploads/'
 
+
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_IMPORTS = (
+    'main.tasks',
+)
