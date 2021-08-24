@@ -1,16 +1,10 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.core.exceptions import PermissionDenied
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.utils import timezone
-from django.views import View
 from django.views.generic import (
     ListView,
-    CreateView,
-    DetailView,
-    UpdateView,
     DeleteView
 )
-from django.urls import reverse, reverse_lazy
 from django.db.models import Q
 from django.utils.http import urlencode
 
@@ -66,7 +60,6 @@ class MemberDeleteView(LoginRequiredMixin, DeleteView):
         return self.post(*args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        print('delete')
         self.object = self.get_object()
         self.object.deleted = timezone.now()
         self.object.save()
