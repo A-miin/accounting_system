@@ -22,7 +22,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
 'print_heey_now': {
         'task': 'main.tasks.test',
-        'schedule': 5.0,
+        'schedule': 3600,
     },
     'create_MembershipFee_objects':{
         'task': 'main.tasks.create_membership_fee',
@@ -31,4 +31,4 @@ app.conf.beat_schedule = {
     }
 }
 
-app.conf.timezone = 'UTC'
+app.conf.timezone = 'Asia/Bishkek'

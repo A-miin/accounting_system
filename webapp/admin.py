@@ -1,5 +1,8 @@
 from django.contrib import admin
 from django.urls import reverse
+from rangefilter.filters import DateRangeFilter
+# from rangefilter.filters import DateRangeFilter
+
 from webapp.models import Member, Region, Village, MembershipFee, Payments
 from django.utils.html import mark_safe, format_html
 from django.utils.translation import gettext_lazy as _
@@ -9,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 
 class IsPayed(admin.SimpleListFilter):
     title = _('Мүчөлүк төлөмдөрдөн')
-    parameter_name = _('Мүчөлүк төлөмдөрдөн')
+    parameter_name = 'Мүчөлүк төлөмдөрдөн'
 
     def lookups(self, request, model_admin):
         return (
@@ -28,7 +31,7 @@ class IsPayed(admin.SimpleListFilter):
 
 class Deleted(admin.SimpleListFilter):
     title = _('Мүчөлөр')
-    parameter_name = _('Мүчөлөр')
+    parameter_name = 'Мүчөлөр'
 
     def lookups(self, request, model_admin):
         return (
@@ -46,7 +49,7 @@ class Deleted(admin.SimpleListFilter):
 
 
 class MemberAdmin(admin.ModelAdmin):
-    list_display = ['id', 'image_tag', 'name', 'phone_number1', 'region', 'village',
+    list_display = ['id', 'image', 'name', 'phone_number1', 'region', 'village',
                     'membership_payment', 'delete']
 
     list_filter = ['region', 'village', Deleted, IsPayed]
@@ -55,27 +58,40 @@ class MemberAdmin(admin.ModelAdmin):
     ordering = ('deleted', '-created_at')
     list_display_links = ['name']
 
+    def image(self, obj):
+        img = obj.avatar
+        if img:
+            output = f' <a href="{img.url}?w=80&h=50" target="_blank">' \
+                     f'<img src="{img.url}?w=80&h=50" ' \
+                     f'height=80 width=80/></a>'
+        else:
+            output = ""
+        return mark_safe(output)
+
+
+
     def delete(self, obj):
         return format_html(
             '''
-            <a class="btn btn-success" href="{}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                  <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+            <a class="btn btn-success" href="{}" style="color: orange" >
+                <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
                 </svg>
             </a>
-            <a class="btn btn-primary" href="{}">
-                '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">'\
-                    '<path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2z"/>'\
-                '</svg>'
+            <a class="btn btn-primary" href="{}" style="color:green">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                  <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2z"/>
+                </svg>
             </a>
-            <a class="btn btn-danger" href="{}">
+            <a class="btn btn-danger" href="{}" style="color:red">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                   <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                 </svg>
             </a>
             ''',
-            reverse('webapp:delete', args=[obj.pk]),
-            reverse('webapp:delete', args=[obj.pk]),
+            reverse('admin:webapp_member_change', args=[obj.pk]),
+            reverse('admin:webapp_member_change', args=[obj.pk]),
             reverse('webapp:delete', args=[obj.pk]),
         )
 
@@ -83,8 +99,9 @@ class MemberAdmin(admin.ModelAdmin):
 
 
 class MembershipFeeAdmin(admin.ModelAdmin):
+    list_per_page = 100
     list_display = ['id', 'full_name', 'amount', 'payed_at', 'transfer_type', 'is_payed']
-    list_filter = ['payer', 'payed_at', 'is_payed']
+    list_filter = ['payer', ('payed_at', DateRangeFilter), 'is_payed']
     search_fields = ['payer', 'amount', 'payed_at', 'transfer_type']
     readonly_fields = ('id',)
     ordering = ('-created_at',)
@@ -98,7 +115,7 @@ class MembershipFeeAdmin(admin.ModelAdmin):
 
 class PaymentsAdmin(admin.ModelAdmin):
     list_display = ['id', 'payer', 'info', 'amount', 'created_at', 'payments_type']
-    list_filter = ['type', 'created_at']
+    list_filter = ['type', ('created_at', DateRangeFilter)]
     search_fields = ['payer', 'info', 'amount']
     readonly_fields = ('id',)
     ordering = ('-created_at',)
@@ -113,7 +130,7 @@ class PaymentsAdmin(admin.ModelAdmin):
                      '</svg>' \
                      '</p>'
         elif obj.type == 'expense':
-            output = '<p style="color:red">' \
+            output = '<p style="color:black">' \
                      '<svg class="text-danger" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle" viewBox="0 0 16 16">' \
                      '<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>' \
                      '<path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>' \
@@ -132,12 +149,19 @@ class RegionAdmin(admin.ModelAdmin):
     def delete(self, obj):
         return format_html(
             '''
+            <a class="btn btn-success" href="{}" style="color: orange" >
+                <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                </svg>
+            </a>
             <a class="btn btn-success" style="color:red" href="{}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                   <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                 </svg>
             </a>
             ''',
+            reverse('admin:webapp_region_change', args=[obj.pk]),
             reverse('webapp:region-delete', args=[obj.pk]),
         )
 
@@ -154,12 +178,19 @@ class VillageAdmin(admin.ModelAdmin):
     def delete(self, obj):
         return format_html(
             '''
+            <a class="btn btn-success" href="{}" style="color: orange" >
+                <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                </svg>
+            </a>
             <a class="btn btn-success" style="color:red" href="{}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                   <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                 </svg>
             </a>
             ''',
+            reverse('admin:webapp_village_change', args=[obj.pk]),
             reverse('webapp:village-delete', args=[obj.pk]),
         )
 

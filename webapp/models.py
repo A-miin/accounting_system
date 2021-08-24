@@ -119,11 +119,15 @@ class MembershipFee(models.Model):
                                          verbose_name=_('Төлөм суммасы'))
 
     transfer_type = models.ForeignKey('webapp.TransferType',
+                                      null=True,
+                                      blank=True,
                                       on_delete=models.CASCADE,
                                       related_name='membership_fee',
                                       verbose_name=_('Которуу түрү'))
 
     info = models.TextField(max_length=2048,
+                            null=True,
+                            blank=True,
                             verbose_name=_('Кошумча маалымат'))
 
     created_at = models.DateTimeField(auto_now_add=True)
