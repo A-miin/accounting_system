@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
@@ -43,7 +44,7 @@ class Member(models.Model):
                                blank=True,
                                verbose_name=_('Суроту'))
 
-    phone_number1 = PhoneNumberField(verbose_name=_('Телефон 1'))
+    phone_number1 = PhoneNumberField(verbose_name=_('Телефону'))
     phone_number2 = PhoneNumberField(verbose_name=_('Телефон 2'))
     whatsapp_number = PhoneNumberField(verbose_name=_('Whatsapp номери'))
     created_at = models.DateTimeField(auto_now_add=True,
@@ -67,14 +68,22 @@ class Member(models.Model):
                                    verbose_name=_('Өчүрүлгөн'))
 
     def image_tag(self):
-        from django.utils.html import escape
-        return u'<img src="%s"/>' % escape(self.avatar.url)
+        from django.utils.html import mark_safe
+        return mark_safe(u'<img src="%s" width="150" height="150"/>' % (self.avatar.url))
 
-    image_tag.short_description = 'Image'
+    image_tag.short_description = _('Сүрөт')
     image_tag.allow_tags = True
 
     def __str__(self):
         return self.name
+
+    @admin.display(boolean=True)
+    def membership_payment(self):
+        if MembershipFee.objects.filter(payer=self).exists():
+            return MembershipFee.objects.filter(payer=self).last().is_payed
+        return False
+
+    membership_payment.short_description = _("Мүчөлүк төлөмдөр")
 
     class Meta:
         verbose_name = _('Мүчө')

@@ -1,1 +1,1 @@
-from webapp.views.member import IndexView
+from webapp.views.member import IndexView, MemberDeleteView

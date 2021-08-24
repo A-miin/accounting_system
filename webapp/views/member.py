@@ -1,6 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
+from django.utils import timezone
+from django.views import View
 from django.views.generic import (
     ListView,
     CreateView,
@@ -16,12 +18,6 @@ from webapp.models import Member
 from webapp.form import SearchForm
 
 class IndexView(ListView):
-    """
-    Представление для просмотра списка статей. Представление реализовано с
-    использованием generic-представления ListView.
-
-    В представлении активирована пагинация и реализован поиск
-    """
     template_name = 'index.html'
     model = Member
     context_object_name = 'members'
@@ -58,3 +54,20 @@ class IndexView(ListView):
             context['query'] = urlencode({'search_value': self.search_data})
 
         return context
+
+class MemberDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    View for delete members.
+    """
+    model = Member
+    template_name = 'delete.html'
+
+    def get(self, *args, **kwargs):
+        return self.post(*args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        print('delete')
+        self.object = self.get_object()
+        self.object.deleted = timezone.now()
+        self.object.save()
+        return redirect('admin:webapp_member_changelist')
