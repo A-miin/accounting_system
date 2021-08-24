@@ -85,6 +85,14 @@ class Member(models.Model):
 
     membership_payment.short_description = _("Мүчөлүк төлөмдөр")
 
+    @property
+    def membership_payment_filter(self):
+        if MembershipFee.objects.filter(payer=self).exists():
+            return MembershipFee.objects.filter(payer=self).last().is_payed
+        return False
+
+
+
     class Meta:
         verbose_name = _('Мүчө')
         verbose_name_plural = _('Мүчөлөр')
@@ -127,6 +135,14 @@ class MembershipFee(models.Model):
 
     def __str__(self):
         return f'{self.payer}: {self.is_payed}'
+
+    @property
+    def full_name(self):
+        return f'{self.payer.name} {self.payer.surname}'
+
+    class Meta:
+        verbose_name=_('Мүчөлүк төлөм')
+        verbose_name_plural=_('Мүчөлүк төлөмдөр')
 
 PAYMENT_CHOICES=[
     ('income','Киреше'),
