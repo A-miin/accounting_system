@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -27,10 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
+    'jet.dashboard',
     'jet',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -42,11 +42,9 @@ INSTALLED_APPS = [
     #     custom apps
     'webapp',
 
-
     #     lib apps
     'phonenumber_field',
     'rangefilter',
-
 
 ]
 
@@ -80,7 +78,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'main.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -90,7 +87,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -110,7 +106,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -124,24 +119,41 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 MEDIA_URL = 'uploads/'
-
 
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_IMPORTS = (
     'main.tasks',
 )
+JET_SIDE_MENU_ITEMS = [
+    {'app_label': 'webapp', 'items': [
+        {'name': 'region'},
+        {'name': 'village'},
+        {'name': 'membershipfee'},
+        {'name': 'member'},
+        {'name': 'payments'},
+    ]},
+]
+# JET_SIDE_MENU_ITEMS = [
+#     {'label': 'Region', 'app_label': 'webapp', 'items': [],'url': 'http://localhost:8000/admin/webapp/region/'},
+#     {'label': 'Village', 'app_label': 'webapp', 'items': [],'url': 'http://localhost:8000/admin/webapp/village/'},
+#     {'label': 'Membershipfee', 'app_label': 'webapp', 'items': [],'url': 'http://localhost:8000/admin/webapp/membershipfee/'},
+# ]
+# app_label - application name
+# label - application text label
+# items - list of children items
+# url - custom url (format is described below)
+# url_blank - open url in new table (boolean)
+# permissions - list of required permissions to display item

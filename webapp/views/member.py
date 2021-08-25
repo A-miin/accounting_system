@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils import timezone
 from django.views.generic import (
@@ -66,3 +67,9 @@ class MemberDeleteView(LoginRequiredMixin, DeleteView):
         self.object.deleted = timezone.now()
         self.object.save()
         return redirect('admin:webapp_member_changelist')
+
+from django.contrib.admin.views.decorators import staff_member_required
+
+@staff_member_required
+def test_list(request):
+    return redirect('admin:webapp_membershipfee_changelist')
