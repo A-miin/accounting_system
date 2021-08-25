@@ -43,7 +43,7 @@ class Member(models.Model):
     avatar = models.ImageField(upload_to='avatars/',
                                null=True,
                                blank=True,
-                               verbose_name=_('Суроту'))
+                               verbose_name=_('Сүрөтү'))
 
     phone_number1 = PhoneNumberField(verbose_name=_('Телефону'))
     phone_number2 = PhoneNumberField(verbose_name=_('Телефон 2'))
@@ -132,7 +132,7 @@ class MembershipFee(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     is_payed = models.BooleanField(default=False,
-                                   verbose_name=_('Төлөндү белгиси'))
+                                   verbose_name=_('Төлөндү'))
 
     payed_at = models.DateTimeField(null=True,
                                     blank=True,

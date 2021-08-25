@@ -36,7 +36,7 @@ class Deleted(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         return (
             ('Yes', _('Активдүү')),
-            ('No', _('Oчүрүлгөн')),
+            ('No', _('Өчүрүлгөн')),
         )
 
     def queryset(self, request, queryset):
@@ -67,6 +67,7 @@ class MemberAdmin(admin.ModelAdmin):
         else:
             output = ""
         return mark_safe(output)
+    image.short_description = _("Сүрөтү")
 
 
 
@@ -111,7 +112,6 @@ class MembershipFeeAdmin(admin.ModelAdmin):
         return f'{obj.payer.name} {obj.payer.surname}'
 
     full_name.short_description = _("Мүчө")
-
 
 class PaymentsAdmin(admin.ModelAdmin):
     list_display = ['id', 'payer', 'info', 'amount', 'created_at', 'payments_type']
