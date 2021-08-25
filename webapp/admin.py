@@ -25,7 +25,7 @@ class IsPayed(admin.SimpleListFilter):
         if value == 'Yes':
             return queryset.filter(membership_fee=True)
         elif value == 'No':
-            return queryset.exclude(membership_fee=True)
+            return queryset.filter(membership_fee=False)
         return queryset
 
 
@@ -54,7 +54,7 @@ class MemberAdmin(admin.ModelAdmin):
 
     list_filter = ['region', 'village', Deleted, IsPayed]
     search_fields = ['name', 'surname', 'phone_number1', 'phone_number2', 'whatsapp_number']
-    readonly_fields = ('id', 'image_tag')
+    readonly_fields = ('id', 'created_at')
     ordering = ('deleted', '-created_at')
     list_display_links = ['name']
 
@@ -102,9 +102,9 @@ class MemberAdmin(admin.ModelAdmin):
 class MembershipFeeAdmin(admin.ModelAdmin):
     list_per_page = 100
     list_display = ['id', 'full_name', 'amount', 'payed_at', 'transfer_type', 'is_payed']
-    list_filter = ['payer', ('payed_at', DateRangeFilter), 'is_payed']
+    list_filter = ['payer','payed_at', ('payed_at', DateRangeFilter), 'is_payed']
     search_fields = ['payer', 'amount', 'payed_at', 'transfer_type']
-    readonly_fields = ('id',)
+    readonly_fields = ('id', 'created_at')
     ordering = ('-created_at',)
     list_display_links = ['full_name']
 
@@ -115,7 +115,7 @@ class MembershipFeeAdmin(admin.ModelAdmin):
 
 class PaymentsAdmin(admin.ModelAdmin):
     list_display = ['id', 'payer', 'info', 'amount', 'created_at', 'payments_type']
-    list_filter = ['type', ('created_at', DateRangeFilter)]
+    list_filter = ['type', 'created_at', ('created_at', DateRangeFilter)]
     search_fields = ['payer', 'info', 'amount']
     readonly_fields = ('id',)
     ordering = ('-created_at',)
@@ -139,12 +139,20 @@ class PaymentsAdmin(admin.ModelAdmin):
         return mark_safe(output)
 
 
+class VillageInline(admin.TabularInline):
+    model = Village
+    fields = ('name',)
+
+
 class RegionAdmin(admin.ModelAdmin):
+    inlines = (VillageInline,)
     list_display = ['id', 'name', 'delete']
     list_filter = ['name', ]
     search_fields = ['id', 'name']
     readonly_fields = ('id',)
     list_display_links = ['name', ]
+    fields = ('id', 'name')
+
 
     def delete(self, obj):
         return format_html(

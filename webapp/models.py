@@ -11,6 +11,10 @@ class Region(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def get_villages(self):
+        return self.villages
+
     class Meta:
         verbose_name = _('Аймак')
         verbose_name_plural = _('Аймактар')
@@ -67,13 +71,6 @@ class Member(models.Model):
     deleted = models.DateTimeField(null=True,
                                    blank=True,
                                    verbose_name=_('Өчүрүлгөн'))
-
-    def image_tag(self):
-        from django.utils.html import mark_safe
-        return mark_safe(u'<img src="%s" width="150" height="150"/>' % self.avatar.url)
-
-    image_tag.short_description = _('Сүрөт')
-    image_tag.allow_tags = True
 
     def __str__(self):
         return self.name

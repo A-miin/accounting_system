@@ -137,23 +137,12 @@ CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_IMPORTS = (
     'main.tasks',
 )
+JET_SIDE_MENU_COMPACT = True
+
 JET_SIDE_MENU_ITEMS = [
-    {'app_label': 'webapp', 'items': [
-        {'name': 'region'},
-        {'name': 'village'},
-        {'name': 'membershipfee'},
-        {'name': 'member'},
-        {'name': 'payments'},
-    ]},
+    {'label': _('Мүчөлөр'), 'app_label': 'webapp','items': [], 'url': {"type": "reverse", "name": "admin:webapp_member_changelist"}, },
+    {'label': _('Мүчөлүк төлөмдөр'), 'app_label': 'webapp', 'items': [], 'url': {"type": "reverse", "name": "admin:webapp_membershipfee_changelist"}, },
+    {'label': _('Төлөмдөр'), 'app_label': 'webapp', 'items': [], 'url': {"type": "reverse", "name": "admin:webapp_payments_changelist"}, },
+    {'label': _('Аймактар'), 'app_label': 'webapp', 'items': [], 'url': {"type": "reverse", "name": "admin:webapp_region_changelist"}, },
+    {'label': _('Айылдар'), 'app_label': 'webapp', 'items': [], 'url': {"type": "reverse", "name": "admin:webapp_village_changelist"}, },
 ]
-# JET_SIDE_MENU_ITEMS = [
-#     {'label': 'Region', 'app_label': 'webapp', 'items': [],'url': 'http://localhost:8000/admin/webapp/region/'},
-#     {'label': 'Village', 'app_label': 'webapp', 'items': [],'url': 'http://localhost:8000/admin/webapp/village/'},
-#     {'label': 'Membershipfee', 'app_label': 'webapp', 'items': [],'url': 'http://localhost:8000/admin/webapp/membershipfee/'},
-# ]
-# app_label - application name
-# label - application text label
-# items - list of children items
-# url - custom url (format is described below)
-# url_blank - open url in new table (boolean)
-# permissions - list of required permissions to display item
