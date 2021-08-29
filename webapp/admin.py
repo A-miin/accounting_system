@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.urls import reverse
 from rangefilter.filters import DateRangeFilter
-# from rangefilter.filters import DateRangeFilter
 
 from webapp.models import Member, Region, Village, MembershipFee, Payments
 from django.utils.html import mark_safe, format_html
@@ -51,7 +50,6 @@ class Deleted(admin.SimpleListFilter):
 class MemberAdmin(admin.ModelAdmin):
     list_display = ['id', 'image', 'name', 'phone_number1', 'region', 'village',
                     'membership_payment', 'delete']
-
     list_filter = ['region', 'village', Deleted, IsPayed]
     search_fields = ['name', 'surname', 'phone_number1', 'phone_number2', 'whatsapp_number']
     readonly_fields = ('id', 'created_at')

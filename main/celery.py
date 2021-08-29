@@ -20,15 +20,11 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
-'print_heey_now': {
-        'task': 'main.tasks.test',
-        'schedule': 3600,
-    },
-    'create_MembershipFee_objects':{
+    'create_MembershipFee_objects': {
         'task': 'main.tasks.create_membership_fee',
         'schedule': crontab(hour=0, minute=0, day_of_month=1),
 
-    }
+    },
 }
 
 app.conf.timezone = 'Asia/Bishkek'
