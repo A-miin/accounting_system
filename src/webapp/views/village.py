@@ -8,7 +8,7 @@ class VillageDeleteView(LoginRequiredMixin, DeleteView):
     View for delete regions.
     """
     model = Village
-    template_name = 'delete.html'
+    template_name = '../templates/delete.html'
 
     def get(self, *args, **kwargs):
         return self.post(*args, **kwargs)

@@ -56,7 +56,7 @@ class MemberDeleteView(LoginRequiredMixin, DeleteView):
     View for delete members.
     """
     model = Member
-    template_name = 'delete.html'
+    template_name = '../templates/delete.html'
 
     def get(self, *args, **kwargs):
         return self.post(*args, **kwargs)
