@@ -18,6 +18,13 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from webapp.views.member import test_list
+from django.utils.translation import gettext_lazy as _
+
+admin.site.site_header = _("Коомдук Бирикме")
+admin.site.site_title = _("Коомдук Бирикме")
+admin.site.index_title = _("Коомдук Бирикме")
+admin.site.site_url= '/admin/webapp/membershipfee/'
+admin.site.enable_nav_sidebar=False
 
 urlpatterns = [
     path('jet/', include('jet.urls', 'jet')),

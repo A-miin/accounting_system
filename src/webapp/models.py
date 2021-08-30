@@ -76,6 +76,12 @@ class Member(models.Model):
         return self.name
 
     @admin.display(boolean=True)
+    def membership_fee_flag(self):
+        return not self.membership_fee
+
+    membership_fee_flag.short_description = _("Төлөмдөрдү төлөйт")
+
+    @admin.display(boolean=True)
     def membership_payment(self):
         if MembershipFee.objects.filter(payer=self).exists():
             return MembershipFee.objects.filter(payer=self).last().is_payed

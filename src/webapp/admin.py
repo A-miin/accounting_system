@@ -15,16 +15,16 @@ class IsPayed(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ('Yes', _('бошотулган')),
-            ('No', _('бошотулбаган')),
+            ('Yes', _('төлөйт')),
+            ('No', _('бошотулган')),
         )
 
     def queryset(self, request, queryset):
         value = self.value()
         if value == 'Yes':
-            return queryset.filter(membership_fee=True)
-        elif value == 'No':
             return queryset.filter(membership_fee=False)
+        elif value == 'No':
+            return queryset.exclude(membership_fee=False)
         return queryset
 
 
@@ -49,7 +49,7 @@ class Deleted(admin.SimpleListFilter):
 
 class MemberAdmin(admin.ModelAdmin):
     list_display = ['id', 'image', 'name', 'phone_number1', 'region', 'village',
-                    'membership_payment', 'delete']
+                    'membership_fee_flag', 'delete']
     list_filter = ['region', 'village', Deleted, IsPayed]
     search_fields = ['name', 'surname', 'phone_number1', 'phone_number2', 'whatsapp_number']
     readonly_fields = ('id', 'created_at')
