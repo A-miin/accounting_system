@@ -50,19 +50,32 @@ class Member(models.Model):
                                verbose_name=_('Сүрөтү'))
 
     phone_number1 = PhoneNumberField(verbose_name=_('Телефону'))
-    phone_number2 = PhoneNumberField(verbose_name=_('Телефон 2'))
-    whatsapp_number = PhoneNumberField(verbose_name=_('Whatsapp номери'))
+
+    phone_number2 = PhoneNumberField(null=True,
+                                     blank=True,
+                                     verbose_name=_('Телефон 2'))
+
+    whatsapp_number = PhoneNumberField(null=True,
+                                       blank=True,
+                                       verbose_name=_('Whatsapp номери'))
+
     created_at = models.DateTimeField(auto_now_add=True,
                                       verbose_name=_('Мүчө болуу тарыхы'))
 
-    position = models.CharField(max_length=256,
+    position = models.CharField(null=True,
+                                blank=True,
+                                max_length=256,
                                 verbose_name=_('Кызматы'))
 
     region = models.ForeignKey('webapp.Region',
+                               null=True,
+                               blank=True,
                                on_delete=models.CASCADE,
                                verbose_name=_('Аймагы'))
 
     village = models.ForeignKey('webapp.Village',
+                                null=True,
+                                blank=True,
                                 on_delete=models.CASCADE,
                                 verbose_name=_('Айылы'))
 
