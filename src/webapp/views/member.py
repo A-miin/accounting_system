@@ -67,8 +67,3 @@ class MemberDeleteView(LoginRequiredMixin, DeleteView):
         self.object.save()
         return redirect('admin:webapp_member_changelist')
 
-from django.contrib.admin.views.decorators import staff_member_required
-
-@staff_member_required
-def test_list(request):
-    return redirect('admin:webapp_membershipfee_changelist')

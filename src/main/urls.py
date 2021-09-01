@@ -17,8 +17,9 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
-from webapp.views.member import test_list
 from django.utils.translation import gettext_lazy as _
+
+from webapp.views import test_list
 
 admin.site.site_header = _("Коомдук Бирикме")
 admin.site.site_title = _("Коомдук Бирикме")
