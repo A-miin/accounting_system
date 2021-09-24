@@ -59,4 +59,5 @@ RUN pip install gunicorn
 CMD ["sh", "-c", "python manage.py collectstatic --no-input; \
                   python manage.py migrate; \
                   python manage.py loaddata fixtures/dump.json; \
-                  gunicorn main.wsgi -b 0.0.0.0:8000 && celery -A main worker -B --loglevel=DEBUG"]
+                  gunicorn main.wsgi -b 0.0.0.0:8000 && celery -A main worker -B --loglevel=DEBUG"]root@chekara-org:~/accounting_system/compose/django#
+
